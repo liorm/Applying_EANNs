@@ -59,6 +59,29 @@ public class TrackManager : MonoBehaviour
     }
 
     #region Best and Second best
+    private CarController bestActiveCar = null;
+    /// <summary>
+    /// The current best car (furthest in the track).
+    /// </summary>
+    public CarController BestActiveCar
+    {
+        get { return bestActiveCar; }
+        private set
+        {
+            if (bestActiveCar != value)
+            {
+                bestActiveCar = value;
+                if (BestActiveCarChanged != null)
+                    BestActiveCarChanged(bestActiveCar);
+            }
+        }
+    }
+    /// <summary>
+    /// Event for when the best car has changed.
+    /// </summary>
+    public event System.Action<CarController> BestActiveCarChanged;
+
+
     private CarController bestCar = null;
     /// <summary>
     /// The current best car (furthest in the track).
@@ -179,6 +202,10 @@ public class TrackManager : MonoBehaviour
                     BestCar = car.Car;
                 else if (SecondBestCar == null || car.Car.CurrentCompletionReward >= SecondBestCar.CurrentCompletionReward)
                     SecondBestCar = car.Car;
+
+                // Update best active
+                if (BestActiveCar == null || !BestActiveCar.enabled || car.Car.CurrentCompletionReward >= BestActiveCar.CurrentCompletionReward)
+                    BestActiveCar = car.Car;
             }
         }
     }
@@ -231,6 +258,7 @@ public class TrackManager : MonoBehaviour
 
         BestCar = null;
         SecondBestCar = null;
+        BestActiveCar = null;
     }
 
     /// <summary>

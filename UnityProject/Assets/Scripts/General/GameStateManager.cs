@@ -57,6 +57,7 @@ public class GameStateManager : MonoBehaviour
 
     void Start ()
     {
+        TrackManager.Instance.BestActiveCarChanged += OnBestActiveCarChanged;
         TrackManager.Instance.BestCarChanged += OnBestCarChanged;
         EvolutionManager.Instance.StartEvolution();
 	}
@@ -66,13 +67,17 @@ public class GameStateManager : MonoBehaviour
     // Callback method for when the best car has changed.
     private void OnBestCarChanged(CarController bestCar)
     {
+        if (UIController != null)
+            UIController.SetDisplayTarget(bestCar);
+    }
+
+    // Callback method for when the best active car has changed.
+    private void OnBestActiveCarChanged(CarController bestCar)
+    {
         if (bestCar == null)
             Camera.SetTarget(null);
         else
             Camera.SetTarget(bestCar.gameObject);
-            
-        if (UIController != null)
-            UIController.SetDisplayTarget(bestCar);
     }
     #endregion
 }
